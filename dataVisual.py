@@ -7,8 +7,8 @@ import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
 
-dataframe = pd.read_csv("C:\\Users\\ajord\\Documents\\sneakerdata.csv")
-df = dataframe.iloc[:1000]
+df = pd.read_csv("C:\\Users\\ajord\\Documents\\sneakerdata.csv")
+
 
 
 fig = go.Figure(data = go.Scattergl(
@@ -237,16 +237,13 @@ app.layout = html.Div(
     Output('scatterplot', 'figure'),
     [Input('Brands', 'value')])
 def update_figure(selector):
-    new_df = pd.DataFrame()
-    df = dataframe.iloc[:1000]
+    df = pd.read_csv("C:\\Users\\ajord\\Documents\\sneakerdata.csv")
     if selector == "B":
-        df = dataframe.iloc[:1000]
+        pass
     elif selector == "OFW":
-        new_df = df.loc[df['Brand'] == 'Off-White']
-        df = new_df
+        df = df.loc[df['Brand'] == 'Off-White']
     elif selector == "YZY":
-        new_df = df.loc[df['Brand'] == ' Yeezy']
-        df = new_df
+        df = df.loc[df['Brand'] == ' Yeezy']
 
     fig = go.Figure(data = go.Scattergl(
     x = df['Shoe Size'],
