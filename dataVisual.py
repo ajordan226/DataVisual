@@ -7,145 +7,34 @@ import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
 
-df = pd.read_csv("C:\\Users\\ajord\\Documents\\sneakerdata.csv")
+df = pd.read_csv("C:\\Users\\ajord\\DataVisual\\sneakerdata.csv")
 
-
-
-fig = go.Figure(data = go.Scattergl(
-    x = df['Shoe Size'],
-    y = df['Sale Price'],
+# Temporary Bubble Plot
+fig = go.Figure(data = [go.Scatter(
+    x = [1, 2, 3, 4], 
+    y = [10, 11, 12, 13],
     mode = 'markers',
-    marker = dict(
-        size = 10,
-        color = np.random.randn(1000),
-        colorscale ='Viridis',
-        line_width = 1
-    ),
-    
-    text = df['Sneaker Name']
-))
-
-fig.update_layout(
-    title = 'Shoe Size Vs Sale Price',
-    xaxis = dict(
-        title = 'Shoe Size (US Mens)',
-        titlefont = dict(
-            size = 20
-        )
-    ),
-    yaxis = dict(
-        title = 'Sale Price ($)',
-        titlefont = dict(
-            size = 20
-        )
-    )
-)
-
-states = []
-for i in df['Buyer Region']:
-    if i not in states:
-        states.append(i)
-
-mean_ofw = []
-for i in states:
-    ofw = df.loc[(df.Brand == 'Off-White') & (df['Buyer Region'] == i), 'Sale Price'].mean()
-    mean_ofw.append(ofw)
-
-mean_yzy = []
-for i in states:
-    yzy = df.loc[(df.Brand == ' Yeezy') & (df['Buyer Region'] == i), 'Sale Price'].mean()
-    mean_yzy.append(yzy)
-
-fig2 = go.Figure(data=[
-    go.Bar(name = 'Off-White', x = states, y = mean_ofw ),
-    go.Bar(name = 'Yeezy', x = states, y = mean_yzy)
+    marker_size = [40, 60, 80, 100])
 ])
 
-fig2.update_layout(
-    title = 'Mean Prices per State',
-    barmode = 'group',
-    xaxis = dict(
-        title = 'States',
-        titlefont = dict(
-            size = 20
-        )
-    ),
-    yaxis = dict(
-        title = 'Average Sale Price($)',
-        titlefont = dict(
-            size = 20
-        )
-    )
-)
-
+# Temporary Chloropleth Map
 df_states = pd.read_csv("C:\\Users\\ajord\\Documents\\states.csv")
-df_states['text'] = df_states['name']
 
 initials = []
 for i in df_states['state']:
     initials.append(i)
 
-s = []
-for i in df_states['name']:
-    s.append(i)
-
-average_ofw = []
-for i in s:
-    ofw = df.loc[(df.Brand == 'Off-White') & (df['Buyer Region'] == i), 'Sale Price'].mean()
-    average_ofw.append(ofw)
-
-average_yzy = []
-for i in s:
-    yzy = df.loc[(df.Brand == ' Yeezy') & (df['Buyer Region'] == i), 'Sale Price'].mean()
-    average_yzy.append(yzy)
-
 fig3 = go.Figure(data=go.Choropleth(
     locations = initials, 
-    z = average_ofw, 
+    z = df['Sale Price'], 
     locationmode = 'USA-states', 
-    colorscale = 'Greens',
-    colorbar_title = "USD",
-    text = df_states['text'],
+    colorscale = 'tempo',
 ))
 
 fig3.update_layout(
-    title_text = '2017-2019 Mean Prices for Off-White by State',
+    title_text = '2017-2019 Mean Prices by State',
     geo_scope = 'usa', 
 )
-
-fig4 = go.Figure(data=go.Choropleth(
-    locations = initials, 
-    z = average_yzy, 
-    locationmode = 'USA-states', 
-    colorscale = 'Purples',
-    colorbar_title = "USD",
-    text = df_states['text'],
-))
-
-fig4.update_layout(
-    title_text = '2017-2019 Mean Prices for Yeezy by State',
-    geo_scope = 'usa', 
-)
-
-fig5 = go.Figure()
-date = []
-for i in df['Order Date']:
-    if i not in date:
-        date.append(i)
-
-fig5.add_trace(go.Scatter(x = date, y = df.loc[(df['Sneaker Name'] == 'Adidas-Yeezy-Boost-350-Low-V2-Beluga'), 'Sale Price'],
-                    name='Adidas-Yeezy-Boost-350-Low-V2-Beluga'))
-fig5.add_trace(go.Scatter(x = date, y = df.loc[(df['Sneaker Name'] == 'Adidas-Yeezy-Boost-350-V2-Core-Black-Copper'), 'Sale Price'],
-                    name='Adidas-Yeezy-Boost-350-V2-Core-Black-Copper'))
-fig5.add_trace(go.Scatter(x = date, y = df.loc[(df['Sneaker Name'] == 'Adidas-Yeezy-Boost-350-V2-Core-Black-Green'), 'Sale Price'],
-                     name='Adidas-Yeezy-Boost-350-V2-Core-Black-Green'))
-fig5.add_trace(go.Scatter(x = date, y = df.loc[(df['Sneaker Name'] == 'Adidas-Yeezy-Boost-350-V2-Core-Black-Red'), 'Sale Price'],
-                    name='Adidas-Yeezy-Boost-350-V2-Core-Black-Red'))
-fig5.add_trace(go.Scatter(x = date, y = df.loc[(df['Sneaker Name'] == 'Adidas-Yeezy-Boost-350-V2-Core-Black-Red-2017'), 'Sale Price'],
-                    name='Adidas-Yeezy-Boost-350-V2-Core-Black-Red-2017'))
-fig5.add_trace(go.Scatter(x = date, y = df.loc[(df['Sneaker Name'] == 'Adidas-Yeezy-Boost-350-V2-Core-Black-White'), 'Sale Price'],
-                     name='Adidas-Yeezy-Boost-350-V2-Core-Black-White'))
-fig5.update_traces(hoverinfo ='text+name', mode = 'lines+markers')
 
 
 external_stylesheets = ['https://codepen.io/amyoshino/pen/jzXypZ.css']
@@ -200,152 +89,173 @@ app.layout = html.Div(
         html.Div([
             html.Div([
                 dcc.Graph(
-                    figure = fig,
-                    id = 'scatterplot'
-                    )
-            ], className = 'twelve columns'),
-        ], className = 'row'),
-        
-        html.Div([
-            html.Div([
-                dcc.Graph(
-                    figure = fig5,
-                    id = 'line chart'
+                    figure = fig3,
+                    id = 'map'
                     )
             ], className = 'twelve columns'),
         ], className = 'row'),
 
-    
-    html.Div([ 
-        html.Div([    
-                dcc.Graph(
-                    figure =fig3,
-                    id = 'off-white map'
-                )
-        ], className = 'six columns'),
-        html.Div([    
-                dcc.Graph(
-                    figure =fig4,
-                    id = 'yeezy map'
-                )
-        ], className = 'six columns')
-    ], className = 'row')
+        html.Div([ 
+            html.Div([    
+                    dcc.Graph(
+                        figure = fig,
+                        id = 'scatterplot'
+                    )
+            ], className = 'twelve columns')
+        ], className = 'row')
 ], className = 'ten columns offset-by-one' )
 )
 
 @app.callback(
     Output('scatterplot', 'figure'),
     [Input('Brands', 'value')])
-def update_figure(selector):
-    df = pd.read_csv("C:\\Users\\ajord\\Documents\\sneakerdata.csv")
-    if selector == "B":
-        pass
-    elif selector == "OFW":
-        df = df.loc[df['Brand'] == 'Off-White']
-    elif selector == "YZY":
-        df = df.loc[df['Brand'] == ' Yeezy']
-
-    fig = go.Figure(data = go.Scattergl(
-    x = df['Shoe Size'],
-    y = df['Sale Price'],
-    mode = 'markers',
-    marker = dict(
-        size = 10,
-        color = np.random.randn(1000),
-        colorscale ='Viridis',
-        line_width = 1
-    ),
+def update_scatter(selector):
+    df2 = pd.read_csv("C:\\Users\\ajord\\DataVisual\\sneakerdata.csv")
     
-    text = df['Sneaker Name']
-))
+    states = []
+    for i in df2['Buyer Region']:
+        if i not in states:
+            states.append(i)
+    
+    if selector == "B":
+        total_sales = []
+        for i in states:
+            sales = df.loc[(df['Buyer Region'] == i), 'Order Date']
+            total_sales.append(sales.size)
+
+        average_sale = []
+        for i in states:
+            mean = df.loc[(df['Buyer Region'] == i), 'Sale Price'].mean()
+            average_sale.append(mean)
+
+        average_retail = []
+        for i in states:
+            mean = df.loc[(df['Buyer Region'] == i), 'Retail Price'].mean()
+            average_retail.append(mean)
+    elif selector == "OFW":
+        total_sales = []
+        for i in states:
+            sales = df2.loc[(df2['Buyer Region'] == i) & (df2.Brand == 'Off-White'), 'Order Date']
+            total_sales.append(sales.size)
+
+        average_sale = []
+        for i in states:
+            mean = df2.loc[(df2['Buyer Region'] == i) & (df2.Brand == 'Off-White'), 'Sale Price'].mean()
+            average_sale.append(mean)
+
+        average_retail = []
+        for i in states:
+            mean = df2.loc[(df2['Buyer Region'] == i) & (df2.Brand == 'Off-White'), 'Retail Price'].mean()
+            average_retail.append(mean)
+    elif selector == "YZY":
+        total_sales = []
+        for i in states:
+            sales = df2.loc[(df2['Buyer Region'] == i) & (df2.Brand == ' Yeezy'), 'Order Date']
+            total_sales.append(sales.size)
+
+        average_sale = []
+        for i in states:
+            mean = df2.loc[(df2['Buyer Region'] == i) & (df2.Brand == ' Yeezy'), 'Sale Price'].mean()
+            average_sale.append(mean)
+
+        average_retail = []
+        for i in states:
+            mean = df2.loc[(df2['Buyer Region'] == i) & (df2.Brand == ' Yeezy'), 'Retail Price'].mean()
+            average_retail.append(mean)
+
+    hover_text = []
+    for i in range(51):
+        hover_text.append(('Buyer Region: {state}<br>'+
+                            'Sale Price: {salePrice}<br>'+
+                            'Retail Price: {retailPrice}<br>'+
+                            'Total Sales: {total}<br>').format(state = states[i],
+                                                    salePrice = average_sale[i],
+                                                    retailPrice = average_retail[i],
+                                                    total = total_sales[i]))
+
+    fig = go.Figure(data = [go.Scatter(
+        x = average_retail,
+        y = average_sale,
+        mode = 'markers',
+        text = hover_text,
+        marker = dict(
+            color = total_sales,
+            colorscale = 'Agsunset',
+            size = total_sales,
+            colorbar_title = 'Total Sales',
+            sizemode = 'area',
+            sizeref = 2. * max(total_sales)/(100**2),
+            showscale = True
+            )
+    )])
 
     fig.update_layout(
-        title = 'Shoe Size Vs Sale Price',
+        title = 'Sales Per Region',
         xaxis = dict(
-            title = 'Shoe Size (US Mens)',
-            titlefont = dict(
-                size = 20
-            )
+            title = 'Retail Price (USD)',
+            gridcolor = 'white',
+            type = 'log',
+            gridwidth = 2,
         ),
         yaxis = dict(
-            title = 'Sale Price ($)',
-            titlefont = dict(
-                size = 20
-            )
-        )
+            title = 'Sale Price (USD)',
+            gridcolor = 'white',
+            gridwidth = 2,
+        ),
+        paper_bgcolor = 'rgb(243, 243, 243)',
+        plot_bgcolor = 'rgb(243, 243, 243)',
     )
-    
+        
     figure = fig
 
     return figure
 
-'''@app.callback(
-    Output('Bar', 'figure'),
+@app.callback(
+    Output('map', 'figure'),
     [Input('Brands', 'value')])
-def update_bar_chart(selector):
-    if selector == "B":
-        fig2 = go.Figure(data=[
-            go.Bar(name = 'Off-White', x = states, y = mean_ofw, marker_color = 'forestgreen' ),
-            go.Bar(name = 'Yeezy', x = states, y = mean_yzy, marker_color = 'mediumpurple')
-        ])
-        fig2.update_layout(
-            title = 'Mean Prices per State',
-            barmode = 'group',
-            xaxis = dict(
-                title = 'States',
-                titlefont = dict(
-                    size = 20
-                )
-            ),
-            yaxis = dict(
-                title = 'Average Sale Price($)',
-                titlefont = dict(
-                    size = 20
-                )
-            )
-        )
-    elif selector == "OFW":
-        fig2 = go.Figure(data=[
-            go.Bar(name = 'Off-White', x = states, y = mean_ofw, marker_color = 'forestgreen' )
-        ])
-        fig2.update_layout(
-            title = 'Mean Prices per State',
-            xaxis = dict(
-                title = 'States',
-                titlefont = dict(
-                    size = 20
-                )
-            ),
-            yaxis = dict(
-                title = 'Average Sale Price($)',
-                titlefont = dict(
-                    size = 20
-                )
-            )
-        )
-    elif selector == "YZY":
-        fig2 = go.Figure(data=[
-            go.Bar(name = 'Yeezy', x = states, y = mean_yzy, marker_color = 'mediumpurple')
-        ])
-        fig2.update_layout(
-            title = 'Mean Prices per State',
-            xaxis = dict(
-                title = 'States',
-                titlefont = dict(
-                    size = 20
-                )
-            ),
-            yaxis = dict(
-                title = 'Average Sale Price($)',
-                titlefont = dict(
-                    size = 20
-                )
-            )
-        )
-    
-    figure = fig2
+def update_map(selector):
+    df2_states = pd.read_csv("C:\\Users\\ajord\\DataVisual\\states.csv")
+    df2_states['text'] = df2_states['name']
 
-    return figure'''
+    initials = []
+    for i in df2_states['state']:
+        initials.append(i)
+
+    s = []
+    for i in df2_states['name']:
+        s.append(i)
+    if selector == 'B':
+        averages = []
+        for i in s:
+            b = df.loc[(df['Buyer Region'] == i), 'Sale Price'].mean()
+            averages.append(b)
+    elif selector == 'OFW':
+        averages = []
+        for i in s:
+            ofw = df.loc[(df.Brand == 'Off-White') & (df['Buyer Region'] == i), 'Sale Price'].mean()
+            averages.append(ofw)
+    elif selector == 'YZY':
+        averages = []
+        for i in s:
+            yzy = df.loc[(df.Brand == ' Yeezy') & (df['Buyer Region'] == i), 'Sale Price'].mean()
+            averages.append(yzy)
+
+    fig3 = go.Figure(data = go.Choropleth(
+        locations = initials, 
+        z = averages, 
+        locationmode = 'USA-states', 
+        colorscale = 'tempo',
+        colorbar_title = "USD",
+        text = df2_states['text'],
+    ))
+
+    fig3.update_layout(
+        title_text = '2017-2019 Mean Prices by State',
+        geo_scope = 'usa', 
+    )
+
+    figure = fig3
+    return figure
 
 if __name__ == '__main__':
     app.run_server(debug=True)
