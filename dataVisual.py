@@ -9,33 +9,17 @@ import numpy as np
 
 df = pd.read_csv("C:\\Users\\ajord\\DataVisual\\sneakerdata.csv")
 
-# Temporary Bubble Plot
-fig = go.Figure(data = [go.Scatter(
-    x = [1, 2, 3, 4], 
-    y = [10, 11, 12, 13],
-    mode = 'markers',
-    marker_size = [40, 60, 80, 100])
-])
+shoes = df['Sneaker Name'].unique()
+fig2 = go.Figure()
 
-# Temporary Chloropleth Map
-df_states = pd.read_csv("C:\\Users\\ajord\\Documents\\states.csv")
+for shoe in shoes:
+    fig2.add_trace(go.Scatter(x = df['Order Date'], y = df['Sale Price'],
+                    mode = 'lines',
+                    name = shoe))
 
-initials = []
-for i in df_states['state']:
-    initials.append(i)
-
-fig3 = go.Figure(data=go.Choropleth(
-    locations = initials, 
-    z = df['Sale Price'], 
-    locationmode = 'USA-states', 
-    colorscale = 'tempo',
-))
-
-fig3.update_layout(
-    title_text = '2017-2019 Mean Prices by State',
-    geo_scope = 'usa', 
-)
-
+fig2.update_layout(title = 'Sale Prices of Shoes Over Time',
+                   xaxis_title = 'Date',
+                   yaxis_title = 'Sale Price (USD)')
 
 external_stylesheets = ['https://codepen.io/amyoshino/pen/jzXypZ.css']
 
@@ -89,7 +73,6 @@ app.layout = html.Div(
         html.Div([
             html.Div([
                 dcc.Graph(
-                    figure = fig3,
                     id = 'map'
                     )
             ], className = 'twelve columns'),
@@ -98,25 +81,31 @@ app.layout = html.Div(
         html.Div([ 
             html.Div([    
                     dcc.Graph(
-                        figure = fig,
                         id = 'scatterplot'
                     )
             ], className = 'twelve columns')
+        ], className = 'row'),
+
+        html.Div([
+            html.Div([
+                dcc.Graph(
+                    id = 'line chart',
+                    figure = fig2
+                    )
+            ], className = 'twelve columns'),
         ], className = 'row')
 ], className = 'ten columns offset-by-one' )
 )
 
 @app.callback(
     Output('scatterplot', 'figure'),
-    [Input('Brands', 'value')])
-def update_scatter(selector):
+    [Input('Brands', 'value'),
+    Input('map', 'clickData')])
+def update_scatter(selector, map_click_data):
     df2 = pd.read_csv("C:\\Users\\ajord\\DataVisual\\sneakerdata.csv")
     
-    states = []
-    for i in df2['Buyer Region']:
-        if i not in states:
-            states.append(i)
-    
+    states = df2['Buyer Region'].unique().tolist()
+
     if selector == "B":
         total_sales = []
         for i in states:
@@ -173,7 +162,7 @@ def update_scatter(selector):
                                                     retailPrice = average_retail[i],
                                                     total = total_sales[i]))
 
-    fig = go.Figure(data = [go.Scatter(
+    fig = go.Scatter(
         x = average_retail,
         y = average_sale,
         mode = 'markers',
@@ -185,11 +174,11 @@ def update_scatter(selector):
             colorbar_title = 'Total Sales',
             sizemode = 'area',
             sizeref = 2. * max(total_sales)/(100**2),
-            showscale = True
+            showscale = True,
             )
-    )])
+    )
 
-    fig.update_layout(
+    layout = dict(
         title = 'Sales Per Region',
         xaxis = dict(
             title = 'Retail Price (USD)',
@@ -204,11 +193,10 @@ def update_scatter(selector):
         ),
         paper_bgcolor = 'rgb(243, 243, 243)',
         plot_bgcolor = 'rgb(243, 243, 243)',
+        clickmode = 'event+select'
     )
-        
-    figure = fig
 
-    return figure
+    return {'data' : [fig], 'layout' : layout}
 
 @app.callback(
     Output('map', 'figure'),
@@ -240,22 +228,24 @@ def update_map(selector):
             yzy = df.loc[(df.Brand == ' Yeezy') & (df['Buyer Region'] == i), 'Sale Price'].mean()
             averages.append(yzy)
 
-    fig3 = go.Figure(data = go.Choropleth(
+    fig3 = go.Choropleth(
         locations = initials, 
         z = averages, 
-        locationmode = 'USA-states', 
+        locationmode = 'USA-states',
+        customdata = df2_states['name'], 
         colorscale = 'tempo',
         colorbar_title = "USD",
         text = df2_states['text'],
-    ))
-
-    fig3.update_layout(
-        title_text = '2017-2019 Mean Prices by State',
-        geo_scope = 'usa', 
+        
     )
 
-    figure = fig3
-    return figure
+    return {'data' : [fig3],
+            'layout' : go.Layout( title_text = '2017-2019 Mean Prices by State',
+            geo_scope = 'usa', clickmode = 'event+select')}
+
+
+
+        
 
 if __name__ == '__main__':
     app.run_server(debug=True)
