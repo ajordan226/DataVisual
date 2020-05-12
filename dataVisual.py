@@ -8,6 +8,12 @@ import pandas as pd
 import numpy as np
 
 df = pd.read_csv("C:\\Users\\ajord\\DataVisual\\sneakerdata.csv")
+df2 = pd.read_csv("C:\\Users\\ajord\\DataVisual\\states.csv")
+
+def selected_points(clickData):
+    selected_index = []
+    selected_index.append(df2[df2['name'] == clickData].index.values.astype(int)[0])
+    return selected_index
 
 shoes = df['Sneaker Name'].unique()
 fig2 = go.Figure()
@@ -175,7 +181,18 @@ def update_scatter(selector, map_click_data):
             sizemode = 'area',
             sizeref = 2. * max(total_sales)/(100**2),
             showscale = True,
+            ),
+        selectedpoints = None,
+        selected= dict(
+            marker = dict(
+                opacity = 1
             )
+        ),
+        unselected= dict(
+            marker = dict(
+                opacity = 0.5
+            )
+        )
     )
 
     layout = dict(
@@ -200,11 +217,11 @@ def update_scatter(selector, map_click_data):
 
 @app.callback(
     Output('map', 'figure'),
-    [Input('Brands', 'value')])
-def update_map(selector):
+    [Input('Brands', 'value'),
+    Input('scatterplot', 'clickData')])
+def update_map(selector, scatterplot_click_data):
     df2_states = pd.read_csv("C:\\Users\\ajord\\DataVisual\\states.csv")
     df2_states['text'] = df2_states['name']
-
     initials = []
     for i in df2_states['state']:
         initials.append(i)
@@ -236,6 +253,17 @@ def update_map(selector):
         colorscale = 'tempo',
         colorbar_title = "USD",
         text = df2_states['text'],
+        selectedpoints = None,
+        selected= dict(
+            marker = dict(
+                opacity = 1
+            )
+        ),
+        unselected= dict(
+            marker = dict(
+                opacity = 0.5
+            )
+        )
         
     )
 
