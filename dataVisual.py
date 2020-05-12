@@ -7,6 +7,7 @@ import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
 
+<<<<<<< HEAD
 df = pd.read_csv("C:\\Users\\ajord\\DataVisual\\sneakerdata.csv")
 df2 = pd.read_csv("C:\\Users\\ajord\\DataVisual\\states.csv")
 
@@ -14,18 +15,53 @@ def selected_points(clickData):
     selected_index = []
     selected_index.append(df2[df2['name'] == clickData].index.values.astype(int)[0])
     return selected_index
+=======
+# Change path file here to your computer
+df = pd.read_csv("~/Desktop/DataVisual/sneakerdata.csv")
+
+snkr = pd.read_csv("~/Desktop/DataVisual/sneakerdata.csv")
+df23 = pd.DataFrame(snkr)
+df23['Order Date'] = pd.to_datetime(df23['Order Date'])
+
+df23 = df23.groupby(["Order Date", "Brand"])["Sale Price"].mean().to_frame(name = 'Sale Price').reset_index()
+B = df23.groupby("Order Date")["Sale Price"].mean().to_frame(name = 'Sale Price').reset_index()
+OFW = df23[df23['Brand'] == "Off-White"]
+YZY = df23[df23['Brand'] == " Yeezy"]
+
+brands = df23['Brand'].unique()
+
+"""snkr = pd.DataFrame(df)
+snkr['Order Date'] = pd.to_datetime(snkr['Order Date'])
+snkr = snkr.groupby(["Order Date", "Brand"])["Sale Price"].mean().to_frame(name = "Sale Price").reset_index()
+B = snkr.groupby("Order Date")["Sale Price"].mean().to_frame(name = "Sale Price").reset_index()
+OFW = snkr[snkr['Brand' ]=="Off-White"]
+YZY = snkr[snkr['Brand' ]==" Yeezy"]
+"""
+
+lineGraphFig = go.Figure()
+lineGraphFig.add_trace(go.Scatter(x = B['Order Date'], y = B['Sale Price'],
+                mode = 'lines',
+                name = 'Both Brands'))
+
+lineGraphFig.update_layout(title = 'Average Sale Prices of Shoes From 2017-2019',
+                   xaxis_title = 'Date',
+                   yaxis_title = 'Sale Price (USD)')
+>>>>>>> 9547d7ac1f7df6c614a4f3f2699ab6c9248e5b66
 
 shoes = df['Sneaker Name'].unique()
+
+"""
 fig2 = go.Figure()
 
 for shoe in shoes:
     fig2.add_trace(go.Scatter(x = df['Order Date'], y = df['Sale Price'],
                     mode = 'lines',
-                    name = shoe))
+                    name = 'Both'))
 
-fig2.update_layout(title = 'Sale Prices of Shoes Over Time',
+fig2.update_layout(title = 'Average Sale Prices of Shoes From 2017-2019',
                    xaxis_title = 'Date',
                    yaxis_title = 'Sale Price (USD)')
+"""
 
 external_stylesheets = ['https://codepen.io/amyoshino/pen/jzXypZ.css']
 
@@ -47,7 +83,7 @@ app.layout = html.Div(
                     'position' : 'relative',
                     'margin-right': 20,
                     'margin-top' : 20
-            
+
 
                 },
             ),
@@ -72,10 +108,10 @@ app.layout = html.Div(
                         style = {'width' : '40%'},
                         value = 'B',
                         clearable = False
-                    ),  
+                    ),
             ], className = 'twelve columns', style = {'margin-top' : '10'}),
         ], className = 'row'),
-        
+
         html.Div([
             html.Div([
                 dcc.Graph(
@@ -84,19 +120,20 @@ app.layout = html.Div(
             ], className = 'twelve columns'),
         ], className = 'row'),
 
-        html.Div([ 
-            html.Div([    
+        html.Div([
+            html.Div([
                     dcc.Graph(
                         id = 'scatterplot'
                     )
             ], className = 'twelve columns')
         ], className = 'row'),
 
+        # Bes Line Graph - This is my part here, to do the line chart
         html.Div([
             html.Div([
                 dcc.Graph(
-                    id = 'line chart',
-                    figure = fig2
+                    id = 'lineChart',
+                    figure = lineGraphFig
                     )
             ], className = 'twelve columns'),
         ], className = 'row')
@@ -108,8 +145,9 @@ app.layout = html.Div(
     [Input('Brands', 'value'),
     Input('map', 'clickData')])
 def update_scatter(selector, map_click_data):
-    df2 = pd.read_csv("C:\\Users\\ajord\\DataVisual\\sneakerdata.csv")
-    
+    # Change path file here to your computer
+    df2 = pd.read_csv("~/Desktop/DataVisual/sneakerdata.csv")
+
     states = df2['Buyer Region'].unique().tolist()
 
     if selector == "B":
@@ -217,10 +255,17 @@ def update_scatter(selector, map_click_data):
 
 @app.callback(
     Output('map', 'figure'),
+<<<<<<< HEAD
     [Input('Brands', 'value'),
     Input('scatterplot', 'clickData')])
 def update_map(selector, scatterplot_click_data):
     df2_states = pd.read_csv("C:\\Users\\ajord\\DataVisual\\states.csv")
+=======
+    [Input('Brands', 'value')])
+def update_map(selector):
+    # Change path file here to your computer
+    df2_states = pd.read_csv("~/Desktop/DataVisual/states.csv")
+>>>>>>> 9547d7ac1f7df6c614a4f3f2699ab6c9248e5b66
     df2_states['text'] = df2_states['name']
     initials = []
     for i in df2_states['state']:
@@ -246,13 +291,14 @@ def update_map(selector, scatterplot_click_data):
             averages.append(yzy)
 
     fig3 = go.Choropleth(
-        locations = initials, 
-        z = averages, 
+        locations = initials,
+        z = averages,
         locationmode = 'USA-states',
-        customdata = df2_states['name'], 
+        customdata = df2_states['name'],
         colorscale = 'tempo',
         colorbar_title = "USD",
         text = df2_states['text'],
+<<<<<<< HEAD
         selectedpoints = None,
         selected= dict(
             marker = dict(
@@ -265,6 +311,9 @@ def update_map(selector, scatterplot_click_data):
             )
         )
         
+=======
+
+>>>>>>> 9547d7ac1f7df6c614a4f3f2699ab6c9248e5b66
     )
 
     return {'data' : [fig3],
@@ -272,8 +321,30 @@ def update_map(selector, scatterplot_click_data):
             geo_scope = 'usa', clickmode = 'event+select')}
 
 
+@app.callback(
+    Output('lineChart', 'figure'),
+    [Input('Brands', 'value')])
+def update_line(selector):
+    if selector == "B":
+        lineGraphFig.add_trace(go.Scatter(x = B['Order Date'], y = B['Sale Price'],
+                    mode = 'lines',
+                    name = 'Both'))
 
-        
+
+    elif selector == "OFW":
+        lineGraphFig.add_trace(go.Scatter(x=OFW['Order Date'], y=OFW['Sale Price'],
+                    mode='lines',
+                    name='Off-White'))
+
+    elif selector == "YZY":
+        lineGraphFig.add_trace(go.Scatter(x=YZY['Order Date'], y=YZY['Sale Price'],
+                    mode='lines',
+                    name='Yeezy'))
+
+    return {'data' : [lineGraphFig], 'layout' : layout }
+
+
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
