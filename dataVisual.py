@@ -255,32 +255,32 @@ def update_scatter(selector, map_click_data):
     elif selector == "OFW":
         total_sales = []
         for i in states:
-            sales = df2.loc[(df2['Buyer Region'] == i) & (df2.Brand == 'Off-White'), 'Order Date']
+            sales = df.loc[(df['Buyer Region'] == i) & (df.Brand == 'Off-White'), 'Order Date']
             total_sales.append(sales.size)
 
         average_sale = []
         for i in states:
-            mean = df2.loc[(df2['Buyer Region'] == i) & (df2.Brand == 'Off-White'), 'Sale Price'].mean()
+            mean = df.loc[(df['Buyer Region'] == i) & (df.Brand == 'Off-White'), 'Sale Price'].mean()
             average_sale.append(mean)
 
         average_retail = []
         for i in states:
-            mean = df2.loc[(df2['Buyer Region'] == i) & (df2.Brand == 'Off-White'), 'Retail Price'].mean()
+            mean = df.loc[(df['Buyer Region'] == i) & (df.Brand == 'Off-White'), 'Retail Price'].mean()
             average_retail.append(mean)
     elif selector == "YZY":
         total_sales = []
         for i in states:
-            sales = df2.loc[(df2['Buyer Region'] == i) & (df2.Brand == ' Yeezy'), 'Order Date']
+            sales = df.loc[(df['Buyer Region'] == i) & (df.Brand == ' Yeezy'), 'Order Date']
             total_sales.append(sales.size)
 
         average_sale = []
         for i in states:
-            mean = df2.loc[(df2['Buyer Region'] == i) & (df2.Brand == ' Yeezy'), 'Sale Price'].mean()
+            mean = df.loc[(df['Buyer Region'] == i) & (df.Brand == ' Yeezy'), 'Sale Price'].mean()
             average_sale.append(mean)
 
         average_retail = []
         for i in states:
-            mean = df2.loc[(df2['Buyer Region'] == i) & (df2.Brand == ' Yeezy'), 'Retail Price'].mean()
+            mean = df.loc[(df['Buyer Region'] == i) & (df.Brand == ' Yeezy'), 'Retail Price'].mean()
             average_retail.append(mean)
 
 
