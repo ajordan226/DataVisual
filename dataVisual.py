@@ -7,61 +7,127 @@ import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
 
-<<<<<<< HEAD
-df = pd.read_csv("C:\\Users\\ajord\\DataVisual\\sneakerdata.csv")
-df2 = pd.read_csv("C:\\Users\\ajord\\DataVisual\\states.csv")
+df = pd.read_csv("https://raw.githubusercontent.com/ajordan226/DataVisual/master/sneakerdata.csv")
+df2 = pd.read_csv("https://raw.githubusercontent.com/ajordan226/DataVisual/master/states.csv")
 
 def selected_points(clickData):
     selected_index = []
     selected_index.append(df2[df2['name'] == clickData].index.values.astype(int)[0])
     return selected_index
-=======
-# Change path file here to your computer
-df = pd.read_csv("~/Desktop/DataVisual/sneakerdata.csv")
 
-snkr = pd.read_csv("~/Desktop/DataVisual/sneakerdata.csv")
-df23 = pd.DataFrame(snkr)
-df23['Order Date'] = pd.to_datetime(df23['Order Date'])
+def generate_line_graph(dates, sale_price, shoe):
+    new_trace = go.Scatter(x = dates, y = sale_price,
+                    mode = 'markers+lines',
+                    name = shoe,
+                    marker = dict(
+                        color = 'slateblue',
+                        size = 7,
+                        line = dict(
+                            colorscale = 'mint'
+                        )
+                    ))
 
-df23 = df23.groupby(["Order Date", "Brand"])["Sale Price"].mean().to_frame(name = 'Sale Price').reset_index()
-B = df23.groupby("Order Date")["Sale Price"].mean().to_frame(name = 'Sale Price').reset_index()
-OFW = df23[df23['Brand'] == "Off-White"]
-YZY = df23[df23['Brand'] == " Yeezy"]
+    layout = go.Layout(
+        title = 'Time Series of the ' + str(shoe),
+        xaxis_title = 'Dates',
+        yaxis_title = 'Sale Prices (USD)',
+        xaxis = dict(
+            rangeselector=dict(
+                buttons=list([
+                    dict(count=1,
+                        label="1m",
+                        step="month",
+                        stepmode="backward"),
+                    dict(count=6,
+                        label="6m",
+                        step="month",
+                        stepmode="backward"),
+                    dict(count=1,
+                        label="YTD",
+                        step="year",
+                        stepmode="todate"),
+                    dict(count=1,
+                        label="1y",
+                        step="year",
+                        stepmode="backward"),
+                    dict(step="all")
+                ])
+            ),
+            rangeslider = dict(
+                visible = True
+            )
+        )
+    )
+    return {"data" : [new_trace], "layout" : layout}
 
-brands = df23['Brand'].unique()
+def generate_map(averages):
+    df2['text'] = df2['name']
+    
+    initials = [i for i in df2['state']]
+    
+    data = go.Choropleth(
+        locations = initials,
+        z = averages,
+        locationmode = 'USA-states',
+        customdata = df2['name'],
+        colorscale = 'tempo',
+        colorbar_title = "USD",
+        text = df2['text'],
+        
+    )
 
-"""snkr = pd.DataFrame(df)
-snkr['Order Date'] = pd.to_datetime(snkr['Order Date'])
-snkr = snkr.groupby(["Order Date", "Brand"])["Sale Price"].mean().to_frame(name = "Sale Price").reset_index()
-B = snkr.groupby("Order Date")["Sale Price"].mean().to_frame(name = "Sale Price").reset_index()
-OFW = snkr[snkr['Brand' ]=="Off-White"]
-YZY = snkr[snkr['Brand' ]==" Yeezy"]
-"""
+    return {'data' : [data],
+            'layout' : go.Layout( title_text = '2017-2019 Mean Prices by State',
+            geo_scope = 'usa', clickmode = 'event+select')}
 
-lineGraphFig = go.Figure()
-lineGraphFig.add_trace(go.Scatter(x = B['Order Date'], y = B['Sale Price'],
-                mode = 'lines',
-                name = 'Both Brands'))
+def generate_bubble_plot(average_retail, average_sale, total_sales):
+    states = df['Buyer Region'].unique().tolist()
+    
+    hover_text = []
+    for i in range(51):
+        hover_text.append(('Buyer Region: {state}<br>'+
+                                'Sale Price: {salePrice}<br>'+
+                                'Retail Price: {retailPrice}<br>'+
+                                'Total Sales: {total}<br>').format(state = states[i],
+                                                        salePrice = average_sale[i],
+                                                        retailPrice = average_retail[i],
+                                                        total = total_sales[i]))
 
-lineGraphFig.update_layout(title = 'Average Sale Prices of Shoes From 2017-2019',
-                   xaxis_title = 'Date',
-                   yaxis_title = 'Sale Price (USD)')
->>>>>>> 9547d7ac1f7df6c614a4f3f2699ab6c9248e5b66
+    data = go.Scatter(
+        x = average_retail,
+        y = average_sale,
+        mode = 'markers',
+        text = hover_text,
+        marker = dict(
+            color = total_sales,
+            colorscale = 'Agsunset',
+            size = total_sales,
+            colorbar_title = 'Total Sales',
+            sizemode = 'area',
+            sizeref = 2. * max(total_sales)/(100**2),
+            showscale = True,
+            ),
+        )
 
-shoes = df['Sneaker Name'].unique()
+    layout = go.Layout(
+        title = 'Customer Willingness to Buy',
+        xaxis = dict(
+            title = 'Retail Price (USD)',
+            gridcolor = 'white',
+            type = 'log',
+            gridwidth = 2,
+        ),
+        yaxis = dict(
+            title = 'Sale Price (USD)',
+            gridcolor = 'white',
+            gridwidth = 2,
+        ),
+        paper_bgcolor = 'rgb(243, 243, 243)',
+        plot_bgcolor = 'rgb(243, 243, 243)',
+        clickmode = 'event+select'
+        )
 
-"""
-fig2 = go.Figure()
-
-for shoe in shoes:
-    fig2.add_trace(go.Scatter(x = df['Order Date'], y = df['Sale Price'],
-                    mode = 'lines',
-                    name = 'Both'))
-
-fig2.update_layout(title = 'Average Sale Prices of Shoes From 2017-2019',
-                   xaxis_title = 'Date',
-                   yaxis_title = 'Sale Price (USD)')
-"""
+    return {'data' : [data], 'layout' : layout}
 
 external_stylesheets = ['https://codepen.io/amyoshino/pen/jzXypZ.css']
 
@@ -128,12 +194,38 @@ app.layout = html.Div(
             ], className = 'twelve columns')
         ], className = 'row'),
 
+        html.Div([
+            html.Div([
+                    html.P('Choose Brand: '),
+                    dcc.Dropdown(
+                        id = 'Shoe Brands',
+                        options=[
+                            {'label': 'Off-White', 'value': 'Off-White'},
+                            {'label': 'Yeezy', 'value': 'Yeezy'},
+                        ],
+                        style = {'width' : '70%'},
+                        value = 'Off-White',
+                        clearable = False
+                    ),
+            ], className = 'six columns', style = {'margin-top' : '20', 'display' : 'inline-block'}),
+            html.Div([
+                    html.P('Choose Shoe: '),
+                    dcc.Dropdown(
+                        id = 'Shoes',
+                        options=[{'label': shoe, 'value': shoe} for shoe in 
+                                df.loc[(df['Brand'] == 'Off-White'), 'Sneaker Name'].unique()],
+                        style = {'width' : '80%'},
+                        value = df.loc[(df['Brand'] == 'Off-White'), 'Sneaker Name'].unique().tolist()[0],
+                        clearable = False
+                    ),
+            ], className = 'six columns', style = {'margin-top' : '20', 'display' : 'inline-block'})
+        ], className = 'row'),
+
         # Bes Line Graph - This is my part here, to do the line chart
         html.Div([
             html.Div([
                 dcc.Graph(
-                    id = 'lineChart',
-                    figure = lineGraphFig
+                    id = 'lineChart'
                     )
             ], className = 'twelve columns'),
         ], className = 'row')
@@ -145,10 +237,7 @@ app.layout = html.Div(
     [Input('Brands', 'value'),
     Input('map', 'clickData')])
 def update_scatter(selector, map_click_data):
-    # Change path file here to your computer
-    df2 = pd.read_csv("~/Desktop/DataVisual/sneakerdata.csv")
-
-    states = df2['Buyer Region'].unique().tolist()
+    states = df['Buyer Region'].unique().tolist()
 
     if selector == "B":
         total_sales = []
@@ -196,152 +285,62 @@ def update_scatter(selector, map_click_data):
             mean = df2.loc[(df2['Buyer Region'] == i) & (df2.Brand == ' Yeezy'), 'Retail Price'].mean()
             average_retail.append(mean)
 
-    hover_text = []
-    for i in range(51):
-        hover_text.append(('Buyer Region: {state}<br>'+
-                            'Sale Price: {salePrice}<br>'+
-                            'Retail Price: {retailPrice}<br>'+
-                            'Total Sales: {total}<br>').format(state = states[i],
-                                                    salePrice = average_sale[i],
-                                                    retailPrice = average_retail[i],
-                                                    total = total_sales[i]))
 
-    fig = go.Scatter(
-        x = average_retail,
-        y = average_sale,
-        mode = 'markers',
-        text = hover_text,
-        marker = dict(
-            color = total_sales,
-            colorscale = 'Agsunset',
-            size = total_sales,
-            colorbar_title = 'Total Sales',
-            sizemode = 'area',
-            sizeref = 2. * max(total_sales)/(100**2),
-            showscale = True,
-            ),
-        selectedpoints = None,
-        selected= dict(
-            marker = dict(
-                opacity = 1
-            )
-        ),
-        unselected= dict(
-            marker = dict(
-                opacity = 0.5
-            )
-        )
-    )
-
-    layout = dict(
-        title = 'Sales Per Region',
-        xaxis = dict(
-            title = 'Retail Price (USD)',
-            gridcolor = 'white',
-            type = 'log',
-            gridwidth = 2,
-        ),
-        yaxis = dict(
-            title = 'Sale Price (USD)',
-            gridcolor = 'white',
-            gridwidth = 2,
-        ),
-        paper_bgcolor = 'rgb(243, 243, 243)',
-        plot_bgcolor = 'rgb(243, 243, 243)',
-        clickmode = 'event+select'
-    )
-
-    return {'data' : [fig], 'layout' : layout}
+    return generate_bubble_plot(average_retail, average_sale, total_sales)
 
 @app.callback(
     Output('map', 'figure'),
-<<<<<<< HEAD
     [Input('Brands', 'value'),
     Input('scatterplot', 'clickData')])
 def update_map(selector, scatterplot_click_data):
-    df2_states = pd.read_csv("C:\\Users\\ajord\\DataVisual\\states.csv")
-=======
-    [Input('Brands', 'value')])
-def update_map(selector):
-    # Change path file here to your computer
-    df2_states = pd.read_csv("~/Desktop/DataVisual/states.csv")
->>>>>>> 9547d7ac1f7df6c614a4f3f2699ab6c9248e5b66
-    df2_states['text'] = df2_states['name']
-    initials = []
-    for i in df2_states['state']:
-        initials.append(i)
-
-    s = []
-    for i in df2_states['name']:
-        s.append(i)
+    states = [i for i in df2['name']]
+    
     if selector == 'B':
         averages = []
-        for i in s:
+        for i in states:
             b = df.loc[(df['Buyer Region'] == i), 'Sale Price'].mean()
             averages.append(b)
     elif selector == 'OFW':
         averages = []
-        for i in s:
+        for i in states:
             ofw = df.loc[(df.Brand == 'Off-White') & (df['Buyer Region'] == i), 'Sale Price'].mean()
             averages.append(ofw)
     elif selector == 'YZY':
         averages = []
-        for i in s:
+        for i in states:
             yzy = df.loc[(df.Brand == ' Yeezy') & (df['Buyer Region'] == i), 'Sale Price'].mean()
             averages.append(yzy)
 
-    fig3 = go.Choropleth(
-        locations = initials,
-        z = averages,
-        locationmode = 'USA-states',
-        customdata = df2_states['name'],
-        colorscale = 'tempo',
-        colorbar_title = "USD",
-        text = df2_states['text'],
-<<<<<<< HEAD
-        selectedpoints = None,
-        selected= dict(
-            marker = dict(
-                opacity = 1
-            )
-        ),
-        unselected= dict(
-            marker = dict(
-                opacity = 0.5
-            )
-        )
-        
-=======
+    return generate_map(averages)
 
->>>>>>> 9547d7ac1f7df6c614a4f3f2699ab6c9248e5b66
-    )
-
-    return {'data' : [fig3],
-            'layout' : go.Layout( title_text = '2017-2019 Mean Prices by State',
-            geo_scope = 'usa', clickmode = 'event+select')}
-
+@app.callback(
+    Output('Shoes', 'options'),
+    [Input('Shoe Brands', 'value')]
+)
+def update_date_dropdown(selector):
+    if selector == 'Yeezy':
+        return [{'label': shoe, 'value': shoe} for shoe in 
+                df.loc[(df['Brand'] == ' Yeezy'), 'Sneaker Name'].unique()]
+    else:
+        return [{'label': shoe, 'value': shoe} for shoe in 
+                df.loc[(df['Brand'] == 'Off-White'), 'Sneaker Name'].unique()]
 
 @app.callback(
     Output('lineChart', 'figure'),
-    [Input('Brands', 'value')])
+    [Input('Shoes', 'value')])
 def update_line(selector):
-    if selector == "B":
-        lineGraphFig.add_trace(go.Scatter(x = B['Order Date'], y = B['Sale Price'],
-                    mode = 'lines',
-                    name = 'Both'))
-
-
-    elif selector == "OFW":
-        lineGraphFig.add_trace(go.Scatter(x=OFW['Order Date'], y=OFW['Sale Price'],
-                    mode='lines',
-                    name='Off-White'))
-
-    elif selector == "YZY":
-        lineGraphFig.add_trace(go.Scatter(x=YZY['Order Date'], y=YZY['Sale Price'],
-                    mode='lines',
-                    name='Yeezy'))
-
-    return {'data' : [lineGraphFig], 'layout' : layout }
+    new_df = pd.read_csv("https://raw.githubusercontent.com/ajordan226/DataVisual/master/sneakerdata.csv")
+    
+    shoes = new_df['Sneaker Name'].unique().tolist()
+    for shoe in shoes:
+        if selector == shoe:
+            new_df = new_df.groupby(["Order Date", "Sneaker Name"]).mean().reset_index()
+            sale_prices = new_df.loc[new_df["Sneaker Name"] == shoe, 'Sale Price']
+            new_df['Order Date'] = pd.to_datetime(new_df['Order Date'])
+            dates = pd.DatetimeIndex(new_df['Order Date'].unique()).tolist()
+            dates.sort(reverse = True)
+            shoe_name = shoe
+    return generate_line_graph(dates, sale_prices, shoe_name)
 
 
 
