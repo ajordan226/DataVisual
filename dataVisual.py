@@ -22,10 +22,8 @@ def generate_line_graph(dates, sale_price, shoe):
                     marker = dict(
                         color = 'slateblue',
                         size = 7,
-                        line = dict(
-                            colorscale = 'mint'
                         )
-                    ))
+                    )
 
     layout = go.Layout(
         title = 'Time Series of the ' + str(shoe),
