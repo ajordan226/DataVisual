@@ -8,9 +8,9 @@ This project gave us the opportunity to think creatively about how to collect an
 2. In your terminal, install several dash libraries.
 ''' pip install dash==1.12.0 '''
 3. In your terminal, install the NumPy library
-''' python -m pip install --user numpy '''
+``` python -m pip install --user numpy ```
 4. In your terminal, install the Pandas library
-''' pip install pandas '''
+``` pip install pandas ```
 or
-'''conda install pandas '''
+``` conda install pandas ```
 5.
