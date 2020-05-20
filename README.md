@@ -6,17 +6,29 @@ This project gave us the opportunity to think creatively about how to collect an
 
 1. Download latest version of Python3 or Python 2 at [Python Download](https://www.python.org/downloads/).
 2. In your terminal, install several dash libraries.
-``` pip install dash==1.12.0 ```
+``` 
+pip install dash==1.12.0 
+```
 3. In your terminal, install the NumPy library
-``` python -m pip install --user numpy ```
+``` 
+python -m pip install --user numpy 
+```
 4. In your terminal, install the Pandas library
-``` pip install pandas ```
+``` 
+pip install pandas 
+```
 or
-``` conda install pandas ```
+``` 
+conda install pandas 
+```
 5. In your terminal type 
-``` git clone https://github.com/ajordan226/DataVisual.git ```
+``` 
+git clone https://github.com/ajordan226/DataVisual.git 
+```
 6. In datavisual.py, change file path to location of sneaker.csv and states.csv on your machine in the pd.read_csv functions.
 7. Run datavisual.py on terminal with 
-``` python datavisual.py ```
+``` 
+python datavisual.py 
+```
 or run within IDE. You will see something like ``` ...Running on http://127.0.0.1:8050/ ```
 8. Click on the URL and visit it in your web browser.
