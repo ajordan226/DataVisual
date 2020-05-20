@@ -25,10 +25,10 @@ conda install pandas
 ``` 
 git clone https://github.com/ajordan226/DataVisual.git 
 ```
-6. In datavisual.py, change file path to location of sneaker.csv and states.csv on your machine in the pd.read_csv functions.
-7. Run datavisual.py on terminal with 
+6. In dataVisual.py, change file path to location of sneaker.csv and states.csv on your machine in the pd.read_csv functions.
+7. Run dataVisual.py on terminal with 
 ``` 
-python datavisual.py 
+python dataVisual.py 
 ```
 or run within IDE. You will see something like ``` ...Running on http://127.0.0.1:8050/ ```
 8. Click on the URL and visit it in your web browser.
