@@ -5,15 +5,15 @@ This project gave us the opportunity to think creatively about how to collect an
 (All installations are on Windows OS)
 
 1. Download latest version of Python3 or Python 2 at [Python Download](https://www.python.org/downloads/).
-2. In your terminal, install several dash libraries.
+2. In your terminal, install several dash libraries with
 ``` 
 pip install dash==1.12.0 
 ```
-3. In your terminal, install the NumPy library
+3. In your terminal, install the NumPy library with
 ``` 
 python -m pip install --user numpy 
 ```
-4. In your terminal, install the Pandas library
+4. In your terminal, install the Pandas library with
 ``` 
 pip install pandas 
 ```
@@ -30,6 +30,6 @@ git clone https://github.com/ajordan226/DataVisual.git
 ``` 
 python dataVisual.py 
 ```
-or run within IDE. You will see something like ``` ...Running on http://127.0.0.1:8050/ ```
+or run within IDE. You will see something like ``` ...Running on http://127.0.0.1:8050/ ```.
 
 8. Click on the URL and visit it in your web browser.
