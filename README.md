@@ -4,13 +4,14 @@ This project gave us the opportunity to think creatively about how to collect an
 # How to Run:
 (All installations are on Windows OS)
 
-1. Download latest version of Python3 or Python 2 at [Python Download] (https://www.python.org/downloads/)
+1. Download latest version of Python3 or Python 2 at [Python Download](https://www.python.org/downloads/).
 2. In your terminal, install several dash libraries.
-''' pip install dash==1.12.0 '''
+``` pip install dash==1.12.0 ```
 3. In your terminal, install the NumPy library
 ``` python -m pip install --user numpy ```
 4. In your terminal, install the Pandas library
 ``` pip install pandas ```
 or
 ``` conda install pandas ```
-5.
+5. In your terminal type 
+``` git clone
