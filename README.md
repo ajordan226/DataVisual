@@ -31,4 +31,5 @@ git clone https://github.com/ajordan226/DataVisual.git
 python dataVisual.py 
 ```
 or run within IDE. You will see something like ``` ...Running on http://127.0.0.1:8050/ ```
+
 8. Click on the URL and visit it in your web browser.
