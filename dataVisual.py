@@ -205,7 +205,7 @@ app.layout = html.Div(
                         value = 'Off-White',
                         clearable = False
                     ),
-            ], className = 'six columns', style = {'margin-top' : '20', 'display' : 'inline-block'}),
+            ], className = 'six columns', style = {'margin-top' : '20', 'width' : '50%', 'display' : 'inline-block'}),
             html.Div([
                     html.P('Choose Shoe: '),
                     dcc.Dropdown(
@@ -216,7 +216,7 @@ app.layout = html.Div(
                         value = df.loc[(df['Brand'] == 'Off-White'), 'Sneaker Name'].unique().tolist()[0],
                         clearable = False
                     ),
-            ], className = 'six columns', style = {'margin-top' : '20', 'display' : 'inline-block'})
+            ], className = 'six columns', style = {'margin-top' : '20', 'width' : '50%', 'display' : 'inline-block'})
         ], className = 'row'),
 
         # Bes Line Graph - This is my part here, to do the line chart
